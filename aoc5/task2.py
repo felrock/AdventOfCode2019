@@ -33,7 +33,6 @@ if __name__ == '__main__':
 
             if (oc[i]%10) == 1:
                 # Addition
-
                 var1, var2 = getParamVals(oc[i], oc)
                 oc[oc[i+3]] = var1 + var2
 
@@ -42,7 +41,6 @@ if __name__ == '__main__':
 
             elif (oc[i]%10) == 2:
                 # Multiplication
-
                 var1, var2 = getParamVals(oc[i], oc)
                 oc[oc[i+3]] = var1 * var2
 
@@ -64,6 +62,7 @@ if __name__ == '__main__':
 
                 var1 = oc[oc[i+1]]
                 print('Output :', var1)
+
                 # step
                 i += 2
 
@@ -74,7 +73,7 @@ if __name__ == '__main__':
                 if var1 != 0:
                     i = var2
                 else:
-                    i += 4
+                    i += 3
 
             elif oc[i]%10 == 6:
                 # jump if true
@@ -83,7 +82,7 @@ if __name__ == '__main__':
                 if var1 == 0:
                     i = var2
                 else:
-                    i += 4
+                    i += 3
 
             elif oc[i]%10 == 7:
                 # Less than
@@ -93,7 +92,7 @@ if __name__ == '__main__':
                     oc[oc[i+3]] = 1
                 else:
                     oc[oc[i+3]] = 0
-                i += 1
+                i += 4
 
             elif oc[i]%10 == 8:
                 # equals
@@ -104,5 +103,3 @@ if __name__ == '__main__':
                 else:
                     oc[oc[i+3]] = 0
                 i += 4
-            else:
-                i += 1
