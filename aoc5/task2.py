@@ -1,7 +1,7 @@
 import sys
 def getParamVals(num, oc):
+# get parameter values, as intermediate or postition
 
-    # get param vals
     p = num//100
     if (p & 1):
         var1 = oc[i+1]
@@ -60,9 +60,7 @@ if __name__ == '__main__':
             elif oc[i] == 4:
                 # Output
 
-                var1 = oc[oc[i+1]]
-                print('Output :', var1)
-
+                print('Output :', oc[oc[i+1]])
                 # step
                 i += 2
 
