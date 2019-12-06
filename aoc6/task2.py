@@ -47,6 +47,7 @@ if __name__ == '__main__':
     for orb in orbits:
 
         a, b = orb.split(')')
+        # remove newline
         b = b[:-1]
         # get all the items
         if not a in objects:

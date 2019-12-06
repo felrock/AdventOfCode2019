@@ -18,6 +18,7 @@ if __name__ == '__main__':
 
         a, b = orb.split(')')
         b = b[:-1]
+
         # get all the items
         if not a in objects:
             objects[a] = 1
@@ -32,6 +33,7 @@ if __name__ == '__main__':
         indir_temp = -1
         key_temp = key
 
+        # walk the relation tree
         while key_temp in relation:
             key_temp = relation[key_temp]
             indir_temp += 1
