@@ -10,9 +10,8 @@ class IntCodeMachine():
 
         self.pc = 0
         self.r = 0
-        self.ram = []
+        self.ram = None
         self.halt = False
-        self.exd = {}
 
     def load(self, filename):
         """
@@ -27,13 +26,13 @@ class IntCodeMachine():
         # Make integers
         oc = input_string.split(',')
         oc = list(map(int, oc))
-        self.ram = defaultdict()
+        self.ram = defaultdict(lambda: 0)
 
         # load into ram
         for i in range(len(oc)):
             self.ram[i] = oc[i]
 
-    def run(self):
+    def run(self, in_sig=None):
         """
             Runs the current state, program counter, inputs on the
             intcode machine. start is used to determine if this is
@@ -41,8 +40,7 @@ class IntCodeMachine():
         """
 
         while self.ram[ self.pc ] != 99:
-            #print('cur opcode', self.ram[self.pc])
-
+            #print('Opcode :', self.ram[self.pc], self.pc)
             if self.ram[ self.pc ] % 10 == 1:
                 # Addition
 
@@ -72,12 +70,11 @@ class IntCodeMachine():
             elif self.ram[ self.pc ] % 10 == 3:
                 # Input, only boot up stuff at start
 
-                print('Input: ', end='')
                 if self.ram[self.pc] == 203:
-                    self.ram[self.r + self.ram[self.pc + 1]] = int(input())
+                    self.ram[self.r + self.ram[self.pc+1]] = in_sig
 
                 else:
-                    self.ram[ self.ram[ self.pc + 1 ] ] = int(input())
+                    self.ram[self.ram[self.pc+1]] = in_sig
 
                 # step
                 self.pc += 2
@@ -86,6 +83,7 @@ class IntCodeMachine():
                 # Output
 
                 var1, var2, var3 = self.getParamVals()
+
                 # step
                 self.pc += 2
                 return var1
@@ -141,14 +139,14 @@ class IntCodeMachine():
                 self.pc += 4
 
             elif self.ram[ self.pc ] % 10 == 9:
-
+                print(self.ram[self.pc])
                 var1, var2, var3 = self.getParamVals()
                 self.r += var1
                 self.pc += 2
 
         # amp halted return True
         self.halt = True
-        return 0
+        return -1
 
     def getParamVals(self):
         """
@@ -187,20 +185,70 @@ class IntCodeMachine():
 
         return var1, var2, var3
 
-def enterFuncDebug(*args):
-    """
-        prints args for debug purposes
-    """
+def rot(dir, new_dir):
 
-    string = '# Entering {} : index {}, in {}, p {}, start {}'.format(*args)
-    print(string)
+    left, right = 0, 1
+
+    dir_up =   (0, 1)
+    dir_left = (-1, 0)
+    dir_down = (0, -1)
+    dir_right =(1, 0)
+
+    if new_dir == left:
+
+        if dir == dir_up:
+            return dir_left
+
+        if dir == dir_down:
+            return dir_right
+
+        if dir == dir_right:
+            return dir_up
+
+        return dir_down
+    else:
+
+        if dir == dir_up:
+            return dir_right
+
+        if dir == dir_down:
+            return dir_left
+
+        if dir == dir_left:
+            return dir_up
+
+        return dir_down
+
 
 
 if __name__ == '__main__':
 
     machine = IntCodeMachine()
     machine.load(sys.argv[1])
+    panels = defaultdict(lambda: 0)
+    start = (0, 0)
+    position = start
+    dir = (0, 1)
+    black = 0
+    white = 1
+    left = 0
+    current_color = black
 
     while not machine.halt:
 
-        print('output: ', machine.run())
+        # get vals
+        out1 = machine.run(current_color)
+        out2 = machine.run(current_color)
+        if out1 == black:
+            panels[position] = black
+        else:
+            panels[position] = white
+
+        dir = rot(dir, out2)
+        position = (position[0]+dir[0], position[1]+dir[1])
+        print('current pos', position)
+        current_color = panels[position]
+        print('current_color', current_color)
+
+    print(len(panels.keys()))
+
