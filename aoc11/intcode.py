@@ -30,9 +30,9 @@ class IntCode():
 
     def __init__(self, file_name):
         # init machine
-        self.mem = defaultdict(lambda:0)
-        self.pc = 0
-        self.r  = 0
+        self.mem  = defaultdict(lambda:0)
+        self.pc   = 0
+        self.r    = 0
         self.halt = False
 
         # load code
@@ -146,9 +146,9 @@ class IntCode():
         # Parse from opcode
         v1, v2, v3 = 0, 0, 0
         op_string = ('0'*5)+str(op)
-        f1 = op_string[-3]
-        f2 = op_string[-4]
-        f3 = op_string[-5]
+        f1 = int(op_string[-3])
+        f2 = int(op_string[-4])
+        f3 = int(op_string[-5])
         if verbose:
             print('modes:', f1, f2, f3, op_string)
 
