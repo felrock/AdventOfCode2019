@@ -11,8 +11,8 @@ INP   = 3
 OUT   = 4
 JMPT  = 5
 JMPF  = 6
-EQ    = 7
-LE    = 8
+LE    = 7
+EQ    = 8
 RPTR  = 9
 HALT  = 99
 
@@ -57,7 +57,7 @@ class IntCode():
                 if verbose:
                     print('ADD', p1, p2)
 
-                self.mem[p3] = p1 + p2
+                self.mem[p3] = self.mem[p1] + self.mem[p2]
                 self.pc += BIG_STEP
 
             elif OP == MUL:
@@ -65,7 +65,7 @@ class IntCode():
                 if verbose:
                     print('MUL', p1, p2)
 
-                self.mem[p3] = p1 * p2
+                self.mem[p3] = self.mem[p1] * self.mem[p2]
                 self.pc += BIG_STEP
 
             elif OP == INP:
@@ -90,8 +90,8 @@ class IntCode():
                 if verbose:
                     print('JMPT', p1, p2)
 
-                if p1 != 0:
-                    self.pc = p2
+                if self.mem[p1] != 0:
+                    self.pc = self.mem[p2]
                 else:
                     self.pc += JMP_STEP
 
@@ -100,8 +100,8 @@ class IntCode():
                 if verbose:
                     print('JMPF', p1, p2)
 
-                if p1 == 0:
-                    self.pc = p2
+                if self.mem[p1] == 0:
+                    self.pc = self.mem[p2]
                 else:
                     self.pc += JMP_STEP
 
@@ -110,7 +110,7 @@ class IntCode():
                 if verbose:
                     print('LE', p1, p2)
 
-                if p1 < p2:
+                if self.mem[p1] < self.mem[p2]:
                     self.mem[p3] = 1
                 else:
                     self.mem[p3] = 0
@@ -121,7 +121,7 @@ class IntCode():
                 if verbose:
                     print('EQ', p1, p2)
 
-                if p1 == p2:
+                if self.mem[p1] == self.mem[p2]:
                     self.mem[p3] = 1
                 else:
                     self.mem[p3] = 0
@@ -132,14 +132,15 @@ class IntCode():
                 if verbose:
                     print('RPTP', p1)
 
-                self.r += p1
+                self.r += self.mem[p1]
                 self.pc += SML_STEP
 
             elif OP == HALT:
                 self.halt = True
                 break
             else:
-                self.pc += 1
+                print('Op-code error,',self.mem[self.pc])
+                sys.exit()
 
     def getMode(self, op):
         # Parse from opcode
@@ -153,27 +154,28 @@ class IntCode():
 
         # First parameter
         if f1 == POS:
-            v1 = self.mem[ self.mem[ self.pc + 1] ]
+            v1 = self.mem[self.pc + 1]
         elif f1 == INTR:
-            v1 = self.mem[ self.pc + 1]
+            v1 = self.pc + 1
         else:
-            v1 = self.mem[ self.r + self.mem[self.pc+1]]
+            v1 = self.r + self.mem[self.pc + 1]
 
         # Second parameter
         if f2 == POS:
-            v2 = self.mem[ self.mem[ self.pc + 2 ] ]
+            v2 = self.mem[self.pc + 2]
         elif f2 == INTR:
-            v2 = self.mem[ self.pc + 2 ]
+            v2 = self.pc + 2
         else:
-            v2 = self.mem[ self.r + self.mem[ self.pc + 2] ]
+            v2 = self.r + self.mem[self.pc + 2]
 
         # Third parameter
         if f3 == REL:
-            v3 = self.r + self.mem[self.pc+3]
+            v3 = self.r + self.mem[self.pc + 3]
         else:
-            v3 = self.mem[self.pc+3]
+            v3 = self.mem[self.pc + 3]
+
         if verbose:
-            print('Parameter values:', v1,v2, v3)
+            print('Parameter values:', v1, v2, v3)
 
         return v1, v2, v3
 
