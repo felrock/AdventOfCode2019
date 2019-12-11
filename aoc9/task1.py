@@ -12,7 +12,6 @@ class IntCodeMachine():
         self.r = 0
         self.ram = []
         self.halt = False
-        self.exd = {}
 
     def load(self, filename):
         """
@@ -197,7 +196,7 @@ if __name__ == '__main__':
 
     machine = IntCodeMachine()
     machine.load(sys.argv[1])
-
+    out = machine.run()
     while not machine.halt:
-
-        print('output: ', machine.run())
+        print(out)
+        out = machine.run()

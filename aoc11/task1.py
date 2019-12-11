@@ -1,6 +1,6 @@
 import sys
 from collections import defaultdict
-
+from intcode import *
 # set 1 for outputs verbose = 1
 verbose = 1
 
@@ -40,11 +40,11 @@ class IntCodeMachine():
         """
 
         while self.ram[ self.pc ] != 99:
-            #print('Opcode :', self.ram[self.pc], self.pc)
+            print('Opcode :', self.ram[self.pc], self.pc)
             if self.ram[ self.pc ] % 10 == 1:
                 # Addition
 
-                var1, var2, var3 = self.getParamVals()
+                var1, var2, var3 = self.param()
                 if var3 > 0:
                     self.ram[var3] = var1 + var2
 
@@ -57,7 +57,7 @@ class IntCodeMachine():
             elif self.ram[ self.pc ] % 10 == 2:
                 # Multiplication
 
-                var1, var2, var3 = self.getParamVals()
+                var1, var2, var3 = self.param()
                 if var3 > 0:
                     self.ram[var3] = var1 * var2
 
@@ -82,7 +82,7 @@ class IntCodeMachine():
             elif self.ram[ self.pc ] % 10 == 4:
                 # Output
 
-                var1, var2, var3 = self.getParamVals()
+                var1, var2, var3 = self.param()
 
                 # step
                 self.pc += 2
@@ -91,7 +91,7 @@ class IntCodeMachine():
             elif self.ram[ self.pc ] % 10 == 5:
                 # jump if true
 
-                var1, var2, var3 = self.getParamVals()
+                var1, var2, var3 = self.param()
                 if var1 != 0:
                     self.pc = var2
 
@@ -101,7 +101,7 @@ class IntCodeMachine():
             elif self.ram[ self.pc ] % 10 == 6:
                 # jump if true
 
-                var1, var2, var3 = self.getParamVals()
+                var1, var2, var3 = self.param()
                 if var1 == 0:
                     self.pc = var2
 
@@ -111,7 +111,7 @@ class IntCodeMachine():
             elif self.ram[ self.pc ] % 10 == 7:
                 # Less than
 
-                var1, var2, var3 = self.getParamVals()
+                var1, var2, var3 = self.param()
                 if var3 == 0:
                     var3 = self.ram[self.pc+3]
 
@@ -126,7 +126,7 @@ class IntCodeMachine():
             elif self.ram[ self.pc ] % 10 == 8:
                 # equals
 
-                var1, var2, var3 = self.getParamVals()
+                var1, var2, var3 = self.param()
                 if var3 == 0:
                     var3 = self.ram[self.pc+3]
 
@@ -139,8 +139,10 @@ class IntCodeMachine():
                 self.pc += 4
 
             elif self.ram[ self.pc ] % 10 == 9:
+                # update relative pointer
+
                 print(self.ram[self.pc])
-                var1, var2, var3 = self.getParamVals()
+                var1, var2, var3 = self.param()
                 self.r += var1
                 self.pc += 2
 
@@ -148,18 +150,36 @@ class IntCodeMachine():
         self.halt = True
         return -1
 
-    def getParamVals(self):
+    def param(self):
         """
             Parse intermediate and position values
         """
 
         # remove opcode
-        p = self.ram[self.pc]//100
-        p1 = p % 10
-        p2 = (p // 10)%10
-        p3 = (p // 10)//10
-        var1, var2, var3 = 0, 0, 0
+        v = str(self.ram[self.pc])
+        if len(v) == 1:
 
+            return 0,0,0
+        else:
+
+            v = v[:-2]
+            v1 = v[-1]
+            v = v[:-1]
+            if not v:
+                return self.values(int(v1), 0, 0)
+            v2 = v[-1]
+            v = v[:-1]
+            if not v:
+
+                return self.values(int(v1), int(v2), 0)
+            else:
+
+                return self.values(int(v1), int(v2), int(v))
+
+    def values(self, p1, p2, p3):
+
+        # first
+        var1, var2, var3 = 0, 0, 0
         if p1 == 1:
             var1 = self.ram[self.pc+1]
 
@@ -170,7 +190,6 @@ class IntCodeMachine():
             var1 = self.ram[self.ram[self.pc+1]]
 
         # second
-
         if p2 == 1:
             var2 = self.ram[self.pc+2]
 
@@ -178,7 +197,6 @@ class IntCodeMachine():
             var2 = self.ram[self.r + self.ram[self.pc+2]]
 
         # thrid
-
         if p3 == 2:
             var3 = self.r + self.ram[self.pc+3]
 
@@ -188,7 +206,6 @@ class IntCodeMachine():
 def rot(dir, new_dir):
 
     left, right = 0, 1
-
     dir_up =   (0, 1)
     dir_left = (-1, 0)
     dir_down = (0, -1)
@@ -223,8 +240,7 @@ def rot(dir, new_dir):
 
 if __name__ == '__main__':
 
-    machine = IntCodeMachine()
-    machine.load(sys.argv[1])
+    machine = IntCode(sys.argv[1])
     panels = defaultdict(lambda: 0)
     start = (0, 0)
     position = start
@@ -239,6 +255,7 @@ if __name__ == '__main__':
         # get vals
         out1 = machine.run(current_color)
         out2 = machine.run(current_color)
+
         if out1 == black:
             panels[position] = black
         else:
@@ -246,9 +263,9 @@ if __name__ == '__main__':
 
         dir = rot(dir, out2)
         position = (position[0]+dir[0], position[1]+dir[1])
-        print('current pos', position)
+        #print('current pos', position)
         current_color = panels[position]
-        print('current_color', current_color)
+        #print('current_color', current_color)
 
     print(len(panels.keys()))
 

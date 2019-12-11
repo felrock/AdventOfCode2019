@@ -2,7 +2,7 @@ from collections import defaultdict
 import sys
 
 # debug
-verbose = 1
+verbose = 0
 
 # operations
 ADD   = 1
