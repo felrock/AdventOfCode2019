@@ -72,11 +72,16 @@ if __name__ == '__main__':
                 components.append((int(val), lbl))
             chem_link[label] = components
 
-    # run recursive search
+    # variables to step fuel count, incrementing with
+    # one takes too long
     tot = 0
     fuel = 1
-    while tot < 10**12:
+    steps = [100000, 10000, 1000, 100, 10, 1]
+    step_index = 0
 
+    while True:
+
+        # try with fuel count
         getOreCount('FUEL', fuel)
 
         # calculate ore use with chem stats dict
@@ -86,15 +91,31 @@ if __name__ == '__main__':
             amt_per_batch = chem_amt[key]
             ore_per_batch = chem_link[key][0][0]
 
+            # round up batch size
             if item % amt_per_batch == 0:
-                batches = item // amt_per_batch
+                batch_size = item // amt_per_batch
             else:
-                batches = item // amt_per_batch
+                batch_size = item // amt_per_batch
 
-            tot += batches*ore_per_batch
-        print(tot)
-        fuel += 1
-        if fuel == 10:
-            sys.exit()
+            tot += batch_size*ore_per_batch
 
-    print(fuel)
+        if tot > 10**12 and step_index != len(steps)-1:
+            # too much ore was used, reduce fuel and
+            # decrease steps count for a more presicion
+            fuel -= steps[step_index]
+            step_index += 1
+
+        elif tot > 10**12 and step_index == len(steps)-1:
+            # found best fuel count, exit loop
+            fuel -= steps[step_index]
+            break
+
+        # step fuel and clear previous executions dict
+        fuel += steps[step_index]
+        chem_stats = {}
+
+
+    print('One trillion ore fuel amount:', fuel)
+
+
+
