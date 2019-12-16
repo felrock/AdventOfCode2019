@@ -1,5 +1,6 @@
 from collections import defaultdict
 import sys
+import copy
 
 # debug
 verbose = 0
@@ -43,7 +44,7 @@ class IntCode():
             self.mem[i] = codes[i]
 
     def getState(self):
-        return self.pc, self.r, self.mem.copy()
+        return self.pc, self.r, copy.deepcopy(self.mem)
 
     def setState(self, state):
         self.pc  = state[0]
