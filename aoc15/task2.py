@@ -52,6 +52,7 @@ if __name__ == '__main__':
     grid = {}
     queue = [(pos, machine.getState(), [])]
     paths = []
+
     while len(queue) > 0:
 
         # try this state
@@ -60,8 +61,52 @@ if __name__ == '__main__':
 
         for ta, tv in actions:
 
+            # make copies
             machine_state_copy  = copy.deepcopy(c_machine_state)
             actions_copy        = copy.deepcopy(c_actions)
+
+            # run with test configuration
+            machine.setState(machine_state_copy)
+            out = machine.run(ta)
+
+            # update position vector
+            t_pos = (c_pos[0]+tv[0], c_pos[1]+tv[1])
+
+            if out == 1 and not t_pos in grid:
+
+                # store actions to evalute step length in later stage
+                actions_copy.append(ta)
+                queue.append((t_pos, machine.getState(), actions_copy))
+                grid[t_pos] = out
+
+            elif out == 2:
+
+                # best path was found, exit
+                actions_copy.append(ta)
+                path = actions_copy
+                end = t_pos
+                break
+        if end != pos:
+            break
+
+    print('Task1 :',len(path), end)
+    grid = {}
+    queue = [(pos, machine.getState())]
+    queue_next_spread = []
+    min = 0
+    # same principle for task2, but count after each spread iteration
+    # all new qued actions will be added to a spread queue, when it is
+    # copied to queue a minute is added
+
+    while len(queue) > 0:
+
+        # try this state
+        c_pos, c_machine_state = queue[0]
+        del queue[0]
+
+        for ta, tv in actions:
+
+            machine_state_copy  = copy.deepcopy(c_machine_state)
 
             machine.setState(machine_state_copy)
             out = machine.run(ta)
@@ -69,13 +114,12 @@ if __name__ == '__main__':
             t_pos = (c_pos[0]+tv[0], c_pos[1]+tv[1])
 
             if out == 1 and not t_pos in grid:
-                actions_copy.append(ta)
-                queue.append((t_pos, machine.getState(), actions_copy))
+                queue_next_spread.append((t_pos, machine.getState()))
                 grid[t_pos] = out
 
-            elif out == 2:
-                actions_copy.append(ta)
-                path = actions_copy
-                end = t_pos
+        if len(queue) == 0:
+            queue = copy.deepcopy(queue_next_spread)
+            queue_next_spread = []
+            min += 1
 
-    print(len(path), end)
+    print('Task2', min-1)

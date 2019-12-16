@@ -30,6 +30,7 @@ REL = 2
 class IntCode():
 
     def __init__(self, file_name):
+
         # init machine
         self.mem  = defaultdict(lambda:0)
         self.pc   = 0
