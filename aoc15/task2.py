@@ -11,35 +11,6 @@ EAST  = 4
 PATH  = 1
 END   = 2
 
-def changePosition(action, position):
-    # update current position with a movement
-    # chagnge if coord doesnt fix
-
-    if action == NORTH:
-        return (position[0], position[1]+1)
-    elif action == SOUTH:
-        return (position[0], position[1]-1)
-    elif action == WEST:
-        return (position[0]-1, position[1])
-    else:
-        return (position[0]+1, position[1])
-
-def changePositionInv(action, position):
-    # update current position with a movement
-    # chagnge if coord doesnt fix
-
-    # inverse
-
-    if action == NORTH:
-        return (position[0], position[1]-1)
-    elif action == SOUTH:
-        return (position[0], position[1]+1)
-    elif action == WEST:
-        return (position[0]+1, position[1])
-    else:
-        return (position[0]-1, position[1])
-
-
 if __name__ == '__main__':
     """
         tuple, (state, actions_left)
