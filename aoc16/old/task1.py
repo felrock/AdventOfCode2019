@@ -1,8 +1,5 @@
 import sys
 
-
-
-
 if __name__ == '__main__':
 
     with open(sys.argv[1], 'r') as f:
@@ -10,6 +7,7 @@ if __name__ == '__main__':
         # read line and remove newline
         string = f.readline()[:-1]
         numbers= list(map(int, string[:]))
+        numbers = numbers*int(sys.argv[2])
 
         # phase nums
         phase_numbers = [0, 1, 0, -1]
@@ -33,15 +31,25 @@ if __name__ == '__main__':
             all_phases.append(new_phase)
 
         # test 100 phases
+        for ph in all_phases:
+
+            for itm in ph:
+
+                if itm == 0:
+                    print('0', end='')
+                if itm == 1:
+                    print('+', end='')
+                if itm == -1:
+                    print('-', end='')
+            print()
+
+
+
         t = {}
         for _ in range(100):
             new_num = []
             for ph in all_phases:
                 new_num.append(abs(sum([x*y for x, y in zip(ph, numbers)]))%10)
             string = ''.join(list(map(str, numbers)))
-            print(string)
             numbers = new_num
-        for key, item in t.items():
-
-            print(item)
-        print(''.join(list(map(str, numbers))[:8]))
+        print(''.join(list(map(str, numbers))))
