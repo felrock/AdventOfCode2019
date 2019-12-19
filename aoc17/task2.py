@@ -44,12 +44,13 @@ def changeDir(pos, vec):
             return right, 'R'
         else:
             return left, 'L'
-    else:
+
+    elif vec == down:
 
         if grid[(pos[0]+left[0], pos[1]+left[1])] == 1:
-            return left, 'L'
+            return left, 'R'
         else:
-            return right, 'R'
+            return right, 'L'
 
 
 
@@ -59,6 +60,7 @@ if __name__ == '__main__':
     x, y = 0, 0
     start = (0, 0)
     while not machine.halt:
+
         out = machine.run()
         if out == 35:
             grid[(x, y)] = 1
@@ -97,4 +99,21 @@ if __name__ == '__main__':
         vec, dir = changeDir(pos, vec)
 
     # here we have a non-optimized path
-    print(path)
+
+    # LZW encoding
+    dict_size = 256
+    move_seq = {}
+
+    for start_move in path:
+
+        next_move = str(p)
+        if moves + next_move in move_seq:
+            moves += next_move
+        else:
+            result.append(move_seq[moves])
+
+            move_seq[moves] = dict_size
+            dict_size += 1
+            moves = str(p)
+
+    print(result)
