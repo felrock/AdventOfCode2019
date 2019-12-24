@@ -53,7 +53,6 @@ def changeDir(pos, vec):
             return right, 'L'
 
 
-
 if __name__ == '__main__':
 
     machine = IntCode(sys.argv[1])
@@ -99,21 +98,10 @@ if __name__ == '__main__':
         vec, dir = changeDir(pos, vec)
 
     # here we have a non-optimized path
+    print(path)
 
+    uncompressed = []
+    for p in path:
+        uncompressed.append(p[0] + str(p[1]))
     # LZW encoding
-    dict_size = 256
-    move_seq = {}
-
-    for start_move in path:
-
-        next_move = str(p)
-        if moves + next_move in move_seq:
-            moves += next_move
-        else:
-            result.append(move_seq[moves])
-
-            move_seq[moves] = dict_size
-            dict_size += 1
-            moves = str(p)
-
-    print(result)
+    print(uncompressed)
